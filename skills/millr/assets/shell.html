@@ -1,0 +1,412 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Millr, the AI Machinist: __FILE__</title>
+<style>
+/* Millr review page: one system. Tokens, then type, then layout, then components, then states and motion. */
+:root{--f:-apple-system,BlinkMacSystemFont,"Inter","Helvetica Neue",Helvetica,Arial,sans-serif;--mono:ui-monospace,SFMono-Regular,Menlo,monospace;
+  --ink:#141517;--muted:#6B6F76;--line:#E6E5E1;--page:#F4F3F0;--card:#FFFFFF;--tint:#FBF1EB;--mark:#F8D3C0;--metal:#8C939C;
+  --flag:#EC6636;--head:#BF4418;--flagtext:#8A2E12;--ok:#3F7D5C;--tag:#000000;
+  --s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:24px;--s6:32px;--r:12px;--rs:6px;--pin:0px}   /* --pin: the height of the part pinned above the list on a phone */
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--ink:#F2F2F0;--muted:#A6A9AE;--line:#33363A;--page:#1A1B1D;--card:#232527;--tint:#3A2219;--mark:#7A3A1E;--head:#FFA37A;--flagtext:#FFD2BF;--ok:#7CC49B;--metal:#B8BCC2}}
+:root[data-theme="dark"]{--ink:#F2F2F0;--muted:#A6A9AE;--line:#33363A;--page:#1A1B1D;--card:#232527;--tint:#3A2219;--mark:#7A3A1E;--head:#FFA37A;--flagtext:#FFD2BF;--ok:#7CC49B;--metal:#B8BCC2}
+*{box-sizing:border-box}html,body{height:100%}
+body{margin:0;background:var(--page);color:var(--ink);font:400 15px/1.55 var(--f);-webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}
+/* type roles */
+h1{font:700 28px/1.15 var(--f);letter-spacing:-.022em;margin:0 0 var(--s2)}
+h2,.k,.dlab,.jm,.revision .rl,.fixbox .lab,.cv .lab{display:block;font:700 14.5px/1.4 var(--f);color:var(--head);margin:0 0 var(--s2)}
+.more .k,.jm{margin-bottom:var(--s1)}
+.sub,.cond,.status,.vfoot,.loading,.sheet p{color:var(--muted)}
+.sub{font:400 14px/1.5 var(--f);margin:0 0 var(--s5)}.cond{font:400 15px/1.5 var(--f)}
+/* layout */
+.app{display:grid;grid-template-columns:minmax(360px,460px) 1fr;gap:var(--s4);height:100%;padding:var(--s4);max-width:1600px;margin:0 auto}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:var(--s6) var(--s6) var(--s5);overflow:auto}
+.view{background:var(--card);border:1px solid var(--line);border-radius:var(--r);display:flex;flex-direction:column;overflow:hidden;min-height:420px}
+.sec+.sec{margin-top:var(--s6)}#makesec,#decidesec{padding-top:var(--s5);border-top:1px solid var(--line)}
+@media (max-width:760px){:root{--pin:300px}.app{grid-template-columns:1fr;height:auto;gap:var(--s3)}.view{order:-1;position:sticky;top:0;z-index:2;height:var(--pin);min-height:var(--pin)}.stage{min-height:0}.panel{padding:var(--s5) var(--s4);overflow:visible}}   /* phone: the part stays pinned on top, the list scrolls beneath it */
+/* summary and sections */
+#makesec h2,#decidesec h2{font:700 17px/1.4 var(--f);border-bottom:2px solid var(--head);padding-bottom:var(--s3);margin:0 0 var(--s1)}
+#makesec .status{display:flex;gap:var(--s2);align-items:flex-start;font:500 16px/1.5 var(--f);color:var(--ink);padding:var(--s1) 0 0;margin:0 0 var(--s2)}
+#makesec .dot{width:10px;height:10px;border-radius:50%;background:var(--flag);margin-top:7px;flex:none}
+#nextsec>.k,#revsec>.k{margin-bottom:var(--s3)}
+/* the list of changes */
+.finding{position:relative;scroll-margin-top:calc(var(--pin) + var(--s3));transition:background .2s ease,border-color .2s ease}   /* a change brought into view stops just below the pinned part */
+.finding+.finding{border-top:2px solid var(--ink)}
+.fhead{display:block;width:100%;text-align:left;background:none;border:0;padding:var(--s5) 40px var(--s5) 0;color:inherit;font:inherit;cursor:pointer;border-radius:var(--rs);position:relative;transition:background .15s ease}
+.fhead:hover{background:color-mix(in srgb,var(--line) 35%,transparent)}.fhead:focus-visible{outline:2px solid var(--flag);outline-offset:2px}
+.ftitle{display:flex;align-items:baseline;gap:var(--s3);font:700 17px/1.35 var(--f);color:var(--head);letter-spacing:-.005em}
+.num{min-width:26px;color:var(--head);font:700 19px/1.2 var(--f)}.state-tag{display:none;margin-left:var(--s1);font:700 12px/1.4 var(--f);color:var(--flagtext)}
+.ixc{display:block;margin:var(--s2) 0 0 38px;font:400 14px/1.4 var(--f);color:var(--ink)}
+.flags{display:flex;flex-wrap:wrap;gap:var(--s1) var(--s4);margin:var(--s2) 0 0 38px}
+.fc{display:inline-flex;align-items:center;gap:6px;font:700 12.5px/1.4 var(--f);color:var(--ink)}.fc i{width:9px;height:9px;border-radius:50%;background:var(--flag);display:inline-block}
+.fc.medium i{background:linear-gradient(90deg,var(--flag) 50%,transparent 50%);box-shadow:inset 0 0 0 1.5px var(--flag)}
+.chev{position:absolute;right:14px;top:30px;width:9px;height:9px;border-right:2px solid var(--head);border-bottom:2px solid var(--head);transform:rotate(45deg);transition:transform .2s ease}
+.finding.open .chev{transform:rotate(225deg);top:34px}
+.undo{display:none;position:absolute;top:var(--s2);right:0;width:36px;height:36px;border-radius:50%;border:1px solid transparent;background:none;color:var(--muted);font-size:17px;line-height:1;cursor:pointer;z-index:1}
+.undo:hover,.undo:focus-visible{color:var(--ink);border-color:var(--line)}.undo:focus-visible{outline:2px solid var(--flag);outline-offset:2px}
+/* open, approved, ignored */
+.finding.open{border:2px solid var(--head);border-radius:var(--r);padding:0 var(--s4) var(--s2);margin:var(--s4) 0;background:var(--card)}.finding.open .fhead{background:var(--tint);margin:0 calc(-1 * var(--s4));width:calc(100% + 2 * var(--s4));padding-left:var(--s4);padding-right:56px;border-radius:10px 10px 0 0}   /* the tint spans the card edge to edge */
+.finding.open+.finding,.finding+.finding.open{border-top:0}.finding.open .fhead:hover{background:none}
+.finding.approved{background:var(--tint);border-radius:var(--r);margin-top:var(--s2);padding-left:var(--s3)}.finding.approved+.finding{border-top:0;margin-top:var(--s2)}
+.finding.approved .state-tag,.finding.ignored .state-tag{display:inline}.finding.ignored{opacity:.5}.finding.ignored .ftitle,.finding.ignored .num{color:var(--muted)}
+.finding.approved .undo,.finding.ignored .undo{display:block}.finding.approved .chev,.finding.ignored .chev{display:none}
+/* the detail, animated open and closed */
+.detail{display:grid;grid-template-rows:0fr;visibility:hidden;transition:grid-template-rows .22s ease,visibility 0s .22s;overflow:hidden}.finding.open .detail{grid-template-rows:1fr;visibility:visible;transition-delay:0s}   /* hidden: closed details leave the tab order */
+.finding.snap .detail{transition:none}   /* after a decision the decided change closes and the next opens at once, so the list can scroll straight to the next one's top */
+.dwrap{min-height:0;overflow:hidden}.detail .cond{margin:0 0 var(--s4)}
+.fsec{padding:var(--s4) 0}.fsec+.fsec{border-top:1px solid var(--line)}.fsec>p,.fsec>.judg{margin:0}
+.fixbox{background:var(--tint);border-left:3px solid var(--flag);padding:var(--s4) var(--s5) var(--s4) var(--s5);margin:0 0 var(--s1)}
+.change{display:grid;grid-template-columns:auto 1fr;gap:var(--s1) var(--s4);align-items:baseline;margin:0 0 var(--s4)}
+.cv{display:contents}.cv .lab{margin:0;font:700 12.5px/1.4 var(--f);color:var(--muted)}.cv.to .lab{color:var(--head)}
+.cv strong{font:700 24px/1.15 var(--f);letter-spacing:-.018em;color:var(--ink)}.cv.to strong{color:var(--flag)}.arrow{display:none}
+.fixline{font:500 16px/1.45 var(--f);margin:0;letter-spacing:-.005em}
+mark.hl{background:none;color:inherit;font-weight:700}b.hn{font-weight:700}
+.btnrow{display:flex;gap:var(--s2);flex-wrap:wrap}.btnrow.big{gap:var(--s2);margin:0 0 var(--s2)}
+.btn{font:500 13.5px/1.2 var(--f);letter-spacing:.01em;border-radius:var(--rs);border:1px solid var(--line);background:var(--card);color:var(--ink);padding:9px 14px;cursor:pointer;transition:background .15s ease,border-color .15s ease,transform .1s ease}
+.btn:hover{border-color:var(--ink)}.btn:active{transform:translateY(1px)}.btn:focus-visible{outline:2px solid var(--flag);outline-offset:2px}
+.btn.primary{background:var(--ink);color:var(--card);border-color:var(--ink)}
+.btnrow.big .btn{flex:1;padding:14px var(--s4);font:500 15px/1.2 var(--f)}
+.btn.go{background:var(--flag);border-color:var(--flag);color:#141517}.btn.go:hover{filter:brightness(1.06)}.btn.ign{background:none;border:1px solid var(--ink);color:var(--ink)}
+.btn.link{border:0;background:none;color:var(--muted);text-decoration:underline;text-underline-offset:3px;font:400 13px/1.2 var(--f);padding:2px 6px}.btn.link:hover{color:var(--flagtext)}
+.more{margin-top:var(--s1);font:400 15px/1.6 var(--f)}.more .fsec:first-child{border-top:1px solid var(--line)}.more p{margin:0 0 var(--s3)}
+.more .k.decide.safe{color:var(--ok)}.judg{font:400 15px/1.6 var(--f)}
+.fold{padding:var(--s3) 0}.fold>summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:var(--s2);margin:0;user-select:none}.fold>summary::-webkit-details-marker{display:none}.fold>summary::after{content:'';width:7px;height:7px;border-right:1.5px solid var(--head);border-bottom:1.5px solid var(--head);transform:rotate(-45deg);transition:transform .15s;margin-left:auto}.fold[open]>summary::after{transform:rotate(45deg)}.fold[open]>summary{margin-bottom:var(--s2)}.fold>summary:focus-visible{outline:2px solid var(--flag);outline-offset:2px;border-radius:2px}.fold .judg,.fold .src{margin:0}
+.finding.open .ixc{display:none}
+/* next step, revision, brand */
+.next{display:none;border:1.5px solid var(--flag);background:var(--tint);border-radius:var(--r);padding:var(--s5)}.next.show{display:block}
+.next b{display:block;font:700 18px/1.3 var(--f);letter-spacing:-.012em;margin-bottom:var(--s2)}.next p{font:400 14.5px/1.6 var(--f);color:var(--muted);margin:0 0 var(--s3)}
+.revision{border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:var(--s4) 0;font:400 14.5px/1.6 var(--f)}.revision b{display:block;font:700 15px/1.4 var(--f);margin-bottom:var(--s1)}
+.revision ul{margin:2px 0 6px;padding-left:18px}.revision .rl{margin:var(--s2) 0 2px}.revision .rl.ok{color:var(--ok)}.revision .rl.open{color:var(--flagtext)}
+.brand{margin-top:var(--s6);display:flex;gap:8px;align-items:center;font:500 12.5px/1.4 var(--f);color:var(--muted)}.brand .wm{font:900 13px/1 var(--f);letter-spacing:.02em;color:var(--ink);margin-right:2px}.brand i{width:9px;height:14px;background:var(--flag);display:inline-block;transform:skewX(-12deg);border-radius:1px}   /* the Millr mark: a tall parallelogram leaning right, 12 degrees */
+/* the 3D view */
+.vhead{padding:var(--s3) var(--s4);font:400 13.5px/1.5 var(--f);color:var(--muted);border-bottom:1px solid var(--line)}.vhead b{font:700 14.5px/1.5 var(--f);color:var(--ink);margin-right:var(--s2)}
+.stage{position:relative;flex:1;min-height:340px;touch-action:none}canvas{display:block;width:100%;height:100%}
+.loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font:400 13.5px/1.5 var(--f);letter-spacing:.02em;background:linear-gradient(100deg,var(--card) 30%,color-mix(in srgb,var(--line) 60%,var(--card)) 50%,var(--card) 70%);background-size:200% 100%;animation:shimmer 1.4s linear infinite}
+@keyframes shimmer{from{background-position:200% 0}to{background-position:-200% 0}}
+.vfoot{padding:var(--s2) var(--s4);font:400 11.5px/1.5 var(--f);letter-spacing:.02em;border-top:1px solid var(--line)}
+/* modal */
+.modal{position:fixed;inset:0;background:rgba(10,12,14,.45);display:none;align-items:center;justify-content:center;padding:var(--s4);z-index:10}.modal.show{display:flex}
+.sheet{background:var(--card);color:var(--ink);border-radius:var(--r);max-width:720px;width:100%;max-height:90vh;display:flex;flex-direction:column;padding:var(--s5)}
+.sheet h3{font:700 18px/1.3 var(--f);letter-spacing:-.012em;margin:0 0 var(--s1)}.sheet p{margin:0 0 var(--s3);font:400 13.5px/1.55 var(--f)}
+.sheet textarea{flex:1;min-height:260px;width:100%;resize:vertical;font:13px/1.55 var(--mono);color:var(--ink);background:var(--page);border:1px solid var(--line);border-radius:var(--rs);padding:var(--s3)}
+@media (prefers-reduced-motion:reduce){.detail,.chev,.finding,.btn,.fhead{transition:none}.loading{animation:none}}
+/* print: the whole review on paper, every change open, in light colors, with a still of the part on top */
+.printhead{display:none}
+@media print{
+  @page{margin:14mm}
+  :root:not(#print){--ink:#141517;--muted:#5B6068;--line:#DCDBD7;--page:#FFFFFF;--card:#FFFFFF;--tint:#FBF1EB;--head:#BF4418;--flagtext:#8A2E12;--ok:#3F7D5C;--pin:0px;color-scheme:light}   /* light, whatever the screen uses */
+  html,body{height:auto;background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}body{padding:0}
+  .app{display:block;height:auto;padding:0;max-width:none}.panel{border:0;border-radius:0;padding:0;overflow:visible}
+  .view,.modal,.sub,#nextsec,.acts,.undo,.chev,.ixc{display:none!important}
+  .printhead{display:block;margin:0 0 var(--s5)}.phfile{margin:0 0 var(--s2);font:400 13px/1.5 var(--f);color:var(--muted)}.phfile b{color:var(--ink);font-weight:700;margin-right:var(--s2)}
+  #printshot{display:block;width:100%;max-height:85mm;object-fit:contain;border:1px solid var(--line);border-radius:var(--r)}#printshot:not([src]){display:none}
+  .phcredit{margin:var(--s2) 0 0;font:400 11px/1.5 var(--f);color:var(--muted)}.phcredit:empty{display:none}
+  .finding,.finding.open,.finding.approved,.finding.ignored{border:0;border-top:2px solid var(--ink);border-radius:0;margin:0;padding:0 0 var(--s3);background:none;opacity:1}
+  #blocking>.finding:first-child,#improve>.finding:first-child{border-top:0}
+  .fhead,.fhead:hover,.finding.open .fhead{background:none;margin:0;width:100%;padding:var(--s4) 0 var(--s2);break-after:avoid;page-break-after:avoid}
+  .detail{display:block;visibility:visible;transition:none}.dwrap{overflow:visible}
+  .fixbox,.fsec>p,.fold{break-inside:avoid;page-break-inside:avoid}
+  .finding.ignored .ftitle,.finding.ignored .num{color:var(--muted)}
+}
+</style></head>
+<body><div class="app">
+<section class="panel" aria-label="Review">
+  <header class="printhead" aria-hidden="true"><p class="phfile"><b>__FILE__</b><span>__DESC__</span></p><img id="printshot" alt=""><p class="phcredit">__CREDIT__</p></header>
+  <section class="sec summary">
+  <h1 id="headline"></h1>
+  <p class="sub">Open a change to see it on the part.</p></section>
+  <section class="sec" id="makesec"><h2>Cannot be machined as drawn</h2>
+  <div id="status" class="status"><span class="dot"></span><span id="statustext"></span></div>
+  <div id="blocking"></div></section>
+  <section class="sec" id="decidesec"><h2 id="score"></h2>
+  <div id="improve"></div></section>
+  <section class="sec" id="nextsec"><p class="k">Next step</p><div id="next" class="next"></div></section>
+  <section class="sec" id="revsec"><p class="k">Revision check</p><div id="revision"></div></section>
+
+  <p class="brand"><i></i><b class="wm">MILLR</b> the AI Machinist</p>
+</section>
+<section class="view" aria-label="3D view of the part">
+  <div class="vhead"><b>__FILE__</b><span>__DESC__</span></div>
+  <div class="stage" id="stage" role="img" aria-label="3D view of the part. Each change in the list lights up where it is on the part."><div class="loading" id="loading">Loading your part</div></div>
+  <div class="vfoot">__CREDIT__</div>
+</section></div>
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mtitle"><div class="sheet">
+  <h3 id="mtitle"></h3><p id="mnote"></p><textarea id="mtext" readonly></textarea>
+  <div class="btnrow"><button class="btn primary" id="mcopy">Copy</button><button class="btn" id="mclose">Close</button></div></div></div>
+<script>__THREE__</script>
+<script>
+const PART = __PART__;
+const REVIEW = __REVIEW__;
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+// ---------- review panel ----------
+const FLAGNAME={cost:'Cost','lead time':'Lead time',risk:'Risk'},FLAGKEYS=['cost','lead time','risk'];
+const level=(f,k)=>{const v=String(f.flags&&f.flags[k]||'').toLowerCase();return v==='high'||v==='medium'?v:'low'};
+const andList=a=>a.length<2?a.join(''):a.slice(0,-1).join(', ')+' and '+a[a.length-1];
+const flagGroups=f=>{const lv=FLAGKEYS.map(k=>[k,level(f,k)]);   // grouped by level, high first: [['high','High risk'],['medium','Medium cost and lead time']]
+  return ['high','medium'].map(L=>[L,lv.filter(([,v])=>v===L).map(([k])=>k)]).filter(([,ks])=>ks.length).map(([L,ks])=>[L,(L==='high'?'High ':'Medium ')+andList(ks)])};
+const flagWords=f=>flagGroups(f).map(([,t])=>t.toLowerCase()).join('; ');
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const NUM=/((?:R|\u00d8|M|\u00b1)?\d+(?:[.,]\d+)?(?:\/\d+)?(?:\s?(?:mm|in|\u00b5m|\u00b0|%|diameters?|times|\u00d7\s?D|x\s?D))?)(?![\w\/-])/g;
+const hl=(s,auto=false)=>{const raw=String(s==null?'':s);if(/\*\*[^*]+\*\*/.test(raw))return raw.split(/\*\*([^*]+)\*\*/).map((p,i)=>i%2?'<mark class="hl">'+esc(p)+'</mark>':esc(p)).join('');if(!auto)return esc(raw);return raw.split(NUM).map((p,i)=>i%2?'<b class="hn">'+esc(p)+'</b>':esc(p)).join('')};   // marks and figures are found in the raw text and escaped piece by piece, so an apostrophe's entity is never highlighted
+const plain=s=>String(s==null?'':s).replace(/\*\*/g,'');
+const short=s=>{s=plain(s).trim();if(s.length<=28)return s;const c=s.slice(0,27);return (c.includes(' ')?c.replace(/\s+\S*$/,''):c)+'\u2026'};   // the card shows the value whole when it fits, else its first words and an ellipsis; the fix carries all of it
+const basisHtml=s=>String(s==null?'':s).trim().split(/\n\s*\n/).filter(Boolean).map(p=>`<p class="judg">${esc(p)}</p>`).join('');
+function card(f,i,kind){
+  const ranges = kind==='b' ? '' : `<div class="flags">${flagGroups(f).map(([L,t])=>`<span class="fc on ${L}"><i></i>${esc(t)}</span>`).join('')}</div>`;
+  const id=`${kind}${i}`, num=String((kind==='b'?i:blk.length+i)+1);
+  return `<article class="finding" data-i="${i}" data-kind="${kind}">
+    <button class="undo" data-act="undo" aria-label="Undo this decision" title="Undo">&#8634;</button><button class="fhead" aria-expanded="false" aria-controls="d-${id}"><span class="chev" aria-hidden="true"></span><span class="ftitle"><span class="num">${num}</span>${esc(f.title)}<span class="state-tag"></span></span><span class="ixc">${esc(short(f.edit.current))} \u2192 ${esc(short(f.edit.target))}</span>${ranges}</button>
+    <div class="detail" id="d-${id}"><div class="dwrap"><p class="cond">${hl(f.condition)}</p><div class="fsec fixbox"><div class="change"><div class="cv"><span class="lab">Now</span><strong>${esc(short(f.edit.current))}</strong></div><span class="arrow" aria-hidden="true">\u2192</span><div class="cv to"><span class="lab">Change to</span><strong>${esc(short(f.edit.target))}</strong></div></div><p class="fixline">${hl(f.fix)}</p></div>
+      <div class="fsec acts"><div class="btnrow big"><button class="btn go" data-act="approve">Fix this</button><button class="btn ign" data-act="ignore">Ignore</button></div></div>
+      <div class="more"><div class="fsec"><p><span class="k">Why it matters</span>${hl(f.why)}</p></div>
+      <div class="fsec"><p><span class="k decide ${f.decide.safe?'safe':''}">${f.decide.safe?'Safe to apply':'Before you change it'}</span>${hl(f.decide.safe?String(f.decide.note||'').replace(/^\s*safe to apply\s*[:.,;-]?\s*/i,''):f.decide.note,false)}</p></div>
+      ${basisHtml(f.basis)?`<details class="fsec fold"><summary class="k">How Claude worked it out</summary>${basisHtml(f.basis)}</details>`:''}</div></div></div></article>`}
+const shown=f=>FLAGKEYS.some(k=>{const v=String(f.flags&&f.flags[k]||'').toLowerCase();return v==='medium'||v==='high'});
+const blk=REVIEW.blocking||[], imp=(REVIEW.improvements||[]).filter(shown);   // a change with nothing at medium or high stays in review.json and off the page
+document.getElementById('makesec').style.display=blk.length?'':'none';
+document.getElementById('statustext').textContent = blk.length ? (blk.length===1?'Change this before anything else.':'Change these before anything else.') : '';
+if(blk.length){document.getElementById('status').classList.add('block');document.getElementById('blocking').innerHTML=blk.map((f,i)=>card(f,i,'b')).join('')}
+document.getElementById('improve').innerHTML = imp.map((f,i)=>card(f,i,'i')).join('');
+const WORDS=['No','One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten'],numWord=n=>n<WORDS.length?WORDS[n]:String(n);
+document.getElementById('headline').textContent = blk.length ? 'This part cannot be machined as drawn' : imp.length ? `${numWord(imp.length)} change${imp.length===1?'':'s'} before a shop sees this` : 'Nothing to change before a shop sees this';
+
+function updateScore(){const all=[...blk,...imp],open=all.filter(f=>!f.status).length,fix=all.filter(f=>f.status==='approved').length,ign=all.filter(f=>f.status==='ignored').length;
+
+  const sc=document.getElementById('score'),nx=document.getElementById('next');
+  if(!all.length){document.querySelector('.summary .sub').style.display='none';document.getElementById('decidesec').style.display='none';document.getElementById('nextsec').style.display='';nx.classList.add('show');
+    nx.innerHTML=`<p>Export PDF if you want the record.</p><div class="btnrow"><button class="btn" data-next="pdf">Export PDF</button></div>`;bindNext(nx);return}
+  const words=['No','One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten'],w=n=>n<words.length?words[n]:String(n);
+  sc.textContent=open?(open===all.length?'Decide each change':`${w(open)} left to decide`):`All decided: ${fix?w(fix).toLowerCase():'none'} to make, ${ign?w(ign).toLowerCase():'none'} ignored`;
+  nx.classList.toggle('show',!open);document.getElementById('nextsec').style.display=open?'none':'';
+  if(!open)nx.innerHTML=`<b>${fix?'Make the '+w(fix).toLowerCase()+(fix===1?' change':' changes'):'No changes to make'}</b>${fix?`<p>Exact instructions for your CAD, with what to check after each change. Export PDF for a copy to keep or send.</p>`:`<p>You ignored every change. Export PDF if you want the record.</p>`}
+    <div class="btnrow">${fix?`<button class="btn primary" data-next="report">Fix instructions</button>${REVIEW.claude_can_edit?`<button class="btn" data-next="cc">Have Claude make the changes</button>`:''}`:''}<button class="btn" data-next="pdf">Export PDF</button></div>`;
+  bindNext(nx)}
+function bindNext(nx){nx.querySelectorAll('[data-next]').forEach(b=>b.addEventListener('click',()=>{const k=b.dataset.next;
+    if(k==='report')openModal('Fix instructions','Every change, with your decisions and exact instructions for whoever edits the CAD.',reportText(),b);
+    if(k==='cc')openModal('Have Claude make the changes','Paste this into the chat with Claude, where Claude can reach the part\'s source. Claude makes each change in a copy, one at a time, and reports what changed.',ccAllText(),b);
+    if(k==='pdf')openModal('Export PDF','Paste this into the chat. Claude makes the PDF with your decisions, images and the fix instructions.',pdfRequestText(),b)}))}
+updateScore();
+document.getElementById('revsec').style.display=REVIEW.revision?'':'none';
+if(REVIEW.revision){const r=REVIEW.revision, li=a=>(a||[]).map(x=>`<li>${esc(x)}</li>`).join('');
+  document.getElementById('revision').innerHTML=`<div class="revision"><b>Revision check against ${esc(r.previous||'the previous version')}</b>${esc(r.summary||'')}
+    ${(r.confirmed||[]).length?`<p class="rl ok">Confirmed</p><ul>${li(r.confirmed)}</ul>`:''}${(r.open||[]).length?`<p class="rl open">Still open</p><ul>${li(r.open)}</ul>`:''}${(r.other||[]).length?`<p class="rl">Other changes</p><ul>${li(r.other)}</ul>`:''}</div>`}
+const VIEW={show:()=>{},clear:()=>{}};
+const DECISIONS={};
+// ---------- fixes: the change text for Claude and the fix instructions ----------
+const modal=document.getElementById('modal'), mtext=document.getElementById('mtext');
+let returnFocus=null;
+function openModal(title,note,text,from){returnFocus=from||null;document.getElementById('mtitle').textContent=title;document.getElementById('mnote').textContent=note;mtext.value=text;document.getElementById('mcopy').textContent='Copy';modal.classList.add('show');mtext.focus();mtext.select()}
+function closeModal(){modal.classList.remove('show');returnFocus&&returnFocus.focus&&returnFocus.focus()}
+document.getElementById('mclose').addEventListener('click',closeModal);
+modal.addEventListener('click',e=>{if(e.target===modal)closeModal()});
+document.addEventListener('keydown',e=>{if(!modal.classList.contains('show'))return;
+  if(e.key==='Escape'){e.preventDefault();closeModal()}
+  if(e.key==='Tab'){const f=[mtext,document.getElementById('mcopy'),document.getElementById('mclose')],i=f.indexOf(document.activeElement);
+    if(e.shiftKey&&i<=0){e.preventDefault();f[f.length-1].focus()}else if(!e.shiftKey&&i===f.length-1){e.preventDefault();f[0].focus()}}});
+document.getElementById('mcopy').addEventListener('click',e=>{mtext.focus();mtext.select();let ok=false;
+  try{ok=document.execCommand('copy')}catch(_){}
+  if(!ok&&navigator.clipboard){navigator.clipboard.writeText(mtext.value).then(()=>{e.target.textContent='Copied'},()=>{e.target.textContent='Press Ctrl or Cmd + C'})}
+  else e.target.textContent=ok?'Copied':'Press Ctrl or Cmd + C'});
+const ccText=(f,n)=>`Fix for ${REVIEW.file}. Make this change in the part's source (the CAD model, or the code that builds it), not in an exported file (STEP, IGES or a mesh).
+
+Feature: ${plain(f.edit.feature)}
+Where: ${plain(f.edit.where)}
+Now: ${plain(f.edit.current)}
+Change to: ${plain(f.edit.target)}
+Before changing: ${f.decide.safe?'safe to apply; ':''}${plain(f.decide.note)}
+After changing: ${plain(f.edit.check)}
+
+Work in a copy, a new version or a branch, never the original. Change only this feature; if the feature that controls it also controls other edges or faces, split it first so only the ones named here change. If all you have is an exported file and no source, do not edit it: say so and give me the instructions instead. Then report what you changed and the re-measured values.`;
+const decisionsText=()=>{const all=[...blk,...imp];const a=all.map((f,i)=>f.status==='approved'?i+1:null).filter(Boolean),g=all.map((f,i)=>f.status==='ignored'?i+1:null).filter(Boolean),u=all.map((f,i)=>!f.status?i+1:null).filter(Boolean);
+  return `Decisions: approved ${a.length?a.join(', '):'none'}; ignored ${g.length?g.join(', '):'none'}; undecided ${u.length?u.join(', '):'none'}.\n\n`};
+const ccAllText=()=>{const all=[...blk,...imp].map((f,i)=>({f,i})).filter(x=>x.f.status==='approved');return all.map(x=>ccText(x.f,x.i)).join('\n\n----\n\n')};
+const pdfRequestText=()=>`Export the Millr review of ${REVIEW.file} as a PDF with images and the fix instructions. ${decisionsText().trim()}`;
+const reportText=()=>`Fix instructions for ${REVIEW.file}\n${'='.repeat(21+REVIEW.file.length)}\n\n`+decisionsText()+[...blk.map(f=>['Cannot be machined as drawn',f]),...imp.map(f=>['Change',f])].map(([k,f],i)=>f.status==='ignored'?`${i+1}. ${plain(f.title)}  [ignored; no change]`:
+`${i+1}. ${f.title}  [${k}${flagWords(f)?': '+flagWords(f):''}]
+   Feature: ${f.edit.feature}
+   Where: ${f.edit.where}
+   Now: ${f.edit.current}
+   Change to: ${f.edit.target}
+   Why: ${plain(f.why)}
+   Before changing: ${f.decide.safe?'safe to apply; ':''}${plain(f.decide.note)}
+   After changing: ${f.edit.check}${f.basis?`\n   How Claude worked it out: ${plain(f.basis).replace(/\s*\n\s*/g,' ')}`:''}`).join('\n\n');
+// ---------- clicks ----------
+function toTop(el){   // bring a change (or the next step) to the top of the list: the panel scrolls on a wide screen, the page under the pinned part on a phone
+  const panel=document.querySelector('.panel'),gap=12,behavior=reduce?'auto':'smooth',r=el.getBoundingClientRect();
+  if(getComputedStyle(panel).overflowY!=='visible')panel.scrollTo({top:Math.max(0,panel.scrollTop+r.top-panel.getBoundingClientRect().top-gap),behavior});
+  else{const v=document.querySelector('.view'),vs=getComputedStyle(v),pin=vs.position==='sticky'?v.offsetHeight+(parseFloat(vs.top)||0):0;window.scrollTo({top:Math.max(0,window.scrollY+r.top-pin-gap),behavior})}}
+function whenOpen(el,fn){   // once a change has finished opening (the browser says when, however slow the frames), so the scroll is worked out from where it ends up
+  const d=el.querySelector('.detail'),go=()=>{if(el.classList.contains('open'))fn()};
+  const a=d.getAnimations?d.getAnimations().filter(x=>x.transitionProperty==='grid-template-rows'):[];
+  if(!a.length){go();return}Promise.all(a.map(x=>x.finished)).then(go,go)}
+function openCard(el,on,snap){   // snap: open or close at once, no animation (after a decision)
+  if(snap)el.classList.add('snap');el.classList.toggle('open',on);el.querySelector('.fhead').setAttribute('aria-expanded',on?'true':'false');
+  if(snap){void el.offsetHeight;requestAnimationFrame(()=>el.classList.remove('snap'))}
+  else if(on)whenOpen(el,()=>toTop(el))}
+function nextUndecided(after){const all=[...document.querySelectorAll('.finding')];const i=all.indexOf(after);return all.slice(i+1).concat(all.slice(0,i)).find(x=>{const f=(x.dataset.kind==='b'?blk:imp)[+x.dataset.i];return !f.status})||null}   // in order below the one just decided, then back to the first still open
+updateScore();
+document.querySelectorAll('.finding').forEach(el=>{
+  const f=(el.dataset.kind==='b'?blk:imp)[+el.dataset.i];
+  el.querySelector('.fhead').addEventListener('click',()=>{const on=!el.classList.contains('open');openCard(el,on);on?VIEW.show(f):VIEW.clear()});
+  const key=el.dataset.kind+el.dataset.i;
+  const setState=(s,quiet)=>{DECISIONS[key]={state:s};el.classList.toggle('approved',s==='approved');el.classList.toggle('ignored',s==='ignored');
+    el.querySelector('.state-tag').textContent=s==='approved'?'\u2713 Approved':s==='ignored'?'Ignored':'';f.status=s==='open'?undefined:s;
+    const advance=s!=='open'&&!quiet;let nx=null;
+    if(advance){openCard(el,false,true);VIEW.clear();nx=nextUndecided(el);if(nx)openCard(nx,true,true)}
+    updateScore();
+    if(advance){const to=nx||document.getElementById('nextsec');toTop(to);const fb=nx?nx.querySelector('.fhead'):to.querySelector('button');fb&&fb.focus({preventScroll:true});   // the next open change, at its top; with none left, the next step
+      if(nx){const nf=(nx.dataset.kind==='b'?blk:imp)[+nx.dataset.i];requestAnimationFrame(()=>{if(nx.classList.contains('open'))VIEW.show(nf)})}}};   // the part follows a frame later, so the list starts moving first
+  if(f.status==='approved'||f.status==='ignored')setState(f.status,true);   // a decision recorded in the review shows from the start
+  el.querySelectorAll('[data-act]').forEach(btn=>btn.addEventListener('click',()=>{const act=btn.dataset.act;
+    if(act==='approve')setState('approved');if(act==='ignore')setState('ignored');if(act==='undo')setState('open');}))});
+// ---------- 3D view: started separately, so the findings and fixes work even if it cannot run ----------
+function init3D(){
+const stage=document.getElementById('stage');
+const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true}); renderer.setPixelRatio(Math.min(devicePixelRatio,2)); renderer.localClippingEnabled=true; stage.prepend(renderer.domElement);
+const scene=new THREE.Scene(), camera=new THREE.PerspectiveCamera(35,1,0.05,5000);
+scene.add(new THREE.HemisphereLight(0xffffff,0x8a8f96,0.85)); const sun=new THREE.DirectionalLight(0xffffff,0.55); sun.position.set(1,2,1.5); scene.add(sun);
+const head=new THREE.DirectionalLight(0xffffff,0.32); scene.add(head); scene.add(head.target);   // a light that travels with the camera, so whichever side it goes to is lit
+const b64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0)).buffer;
+const pos=typeof PART.positions==='string'?new Float32Array(b64(PART.positions)):Float32Array.from(PART.positions), idx=typeof PART.indices==='string'?new Uint32Array(b64(PART.indices)):Uint32Array.from(PART.indices);
+if(String(PART.up||'z').toLowerCase()==='y'){   // a Y-up export stands up as it does in the engineer's CAD: (x, y, z) becomes (x, -z, y), the faces' boxes and axes with it
+  for(let v=0;v<pos.length;v+=3){const y=pos[v+1],z=pos[v+2];pos[v+1]=-z;pos[v+2]=y}
+  for(const f of PART.faces){if(f.box&&f.box.length===6){const b=f.box;f.box=[b[0],-b[5],b[1],b[3],-b[2],b[4]]}if(f.axis&&f.axis.length===6){const a=f.axis;f.axis=[a[0],-a[2],a[1],a[3],-a[5],a[4]]}}}
+const geo=new THREE.BufferGeometry(); geo.setAttribute('position',new THREE.BufferAttribute(pos,3)); geo.setIndex(new THREE.BufferAttribute(idx,1)); geo.computeVertexNormals();
+const col=new Float32Array(pos.length); geo.setAttribute('color',new THREE.BufferAttribute(col,3));
+const METAL=new THREE.Color(getComputedStyle(document.documentElement).getPropertyValue('--metal').trim()||'#8C939C');
+const ncache={}; const faceNormal=f=>{if(ncache[f.id])return ncache[f.id];let x=0,y=0,z=0,a=0;for(let t=f.tris[0];t<f.tris[1];t++){const i0=idx[t*3]*3,i1=idx[t*3+1]*3,i2=idx[t*3+2]*3;const ux=pos[i1]-pos[i0],uy=pos[i1+1]-pos[i0+1],uz=pos[i1+2]-pos[i0+2],vx=pos[i2]-pos[i0],vy=pos[i2+1]-pos[i0+1],vz=pos[i2+2]-pos[i0+2];const cx=(uy*vz-uz*vy)/2,cy=(uz*vx-ux*vz)/2,cz=(ux*vy-uy*vx)/2;x+=cx;y+=cy;z+=cz;a+=Math.hypot(cx,cy,cz)}return ncache[f.id]=[x,y,z,a]};   // the direction a face looks (area-weighted, part coordinates) and its area
+const vcache={}; const faceVerts=id=>{if(vcache[id])return vcache[id];const f=PART.faces[id],s=new Set();for(let t=f.tris[0];t<f.tris[1];t++)for(let k=0;k<3;k++)s.add(idx[t*3+k]);return vcache[id]=[...s]};
+for(const f of PART.faces){if(!f.box||f.box.length!==6){const b=[Infinity,Infinity,Infinity,-Infinity,-Infinity,-Infinity];for(const v of faceVerts(f.id))for(let k=0;k<3;k++){const x=pos[v*3+k];if(x<b[k])b[k]=x;if(x>b[k+3])b[k+3]=x}f.box=isFinite(b[0])?b:[0,0,0,0,0,0]}}   // a face's box from its own triangles when the part file carries none
+function tintIds(ids,c){for(const id of ids)for(const v of faceVerts(id)){col[v*3]=c.r;col[v*3+1]=c.g;col[v*3+2]=c.b}geo.attributes.color.needsUpdate=true}
+function paint(ids){for(let i=0;i<col.length;i+=3){col[i]=METAL.r;col[i+1]=METAL.g;col[i+2]=METAL.b}tintIds(ids||[],new THREE.Color('#EC6636'))}
+paint([]);
+const partMat=new THREE.MeshStandardMaterial({vertexColors:true,metalness:0.15,roughness:0.62,side:THREE.DoubleSide});
+const part=new THREE.Mesh(geo,partMat);
+const edges=new THREE.LineSegments(new THREE.EdgesGeometry(geo,32),new THREE.LineBasicMaterial({color:0x5b6068,transparent:true,opacity:0.35}));
+const root=new THREE.Group(); root.add(part,edges); root.rotation.x=-Math.PI/2; scene.add(root); root.updateMatrixWorld();   // part coordinates are Z-up
+geo.computeBoundingBox(); const bb=geo.boundingBox, ctr=bb.getCenter(new THREE.Vector3()), size=bb.getSize(new THREE.Vector3()).length();
+const toWorld=v=>new THREE.Vector3(v[0],v[1],v[2]).applyMatrix4(root.matrixWorld);
+let target=toWorld([ctr.x,ctr.y,ctr.z]), dist=size*1.35, theta=-0.75, phi=0.95;
+function place(){camera.position.set(target.x+dist*Math.sin(phi)*Math.cos(theta),target.y+dist*Math.cos(phi),target.z+dist*Math.sin(phi)*Math.sin(theta));camera.lookAt(target);fitDepth(dist)}
+function fitDepth(d){const n=Math.max(size*1e-4,d*0.02),f=d+size*3;if(camera.near!==n||camera.far!==f){camera.near=n;camera.far=f;camera.updateProjectionMatrix()}}   // near and far follow the distance, so depth stays precise on a part of any size and hidden faces stay hidden
+function resize(){const w=stage.clientWidth||600,hh=stage.clientHeight||400;renderer.setSize(w,hh,false);camera.aspect=w/hh;camera.updateProjectionMatrix()}
+new ResizeObserver(resize).observe(stage); resize(); place();
+const pts=new Map();
+stage.addEventListener('pointerdown',e=>{stage.classList.add('used');if(e.target.closest&&e.target.closest('button'))return;stage.setPointerCapture&&stage.setPointerCapture(e.pointerId);pts.set(e.pointerId,[e.clientX,e.clientY])});
+stage.addEventListener('pointermove',e=>{if(!pts.has(e.pointerId))return;const p=pts.get(e.pointerId);
+  if(pts.size===2){const o=[...pts.values()].find(v=>v!==p);const d0=Math.hypot(p[0]-o[0],p[1]-o[1]),d1=Math.hypot(e.clientX-o[0],e.clientY-o[1]);if(d1)dist*=d0/d1}
+  else{theta+=(e.clientX-p[0])*0.008;phi=Math.min(3.0,Math.max(0.15,phi-(e.clientY-p[1])*0.008))}
+  pts.set(e.pointerId,[e.clientX,e.clientY]);place()});
+['pointerup','pointercancel'].forEach(t=>stage.addEventListener(t,e=>pts.delete(e.pointerId)));
+stage.addEventListener('wheel',e=>{e.preventDefault();dist*=Math.exp(e.deltaY*0.001);place()},{passive:false});
+let flying=0;   // camera flights still in the air; the view is not settled until they land
+function flyTo(pw,d,th,ph,ms,done){const s={t:target.clone(),d:dist,th:theta,ph:phi},t0=performance.now();ms=reduce?0:ms;flying++;
+  (function step(now){const k=ms?Math.min(1,(now-t0)/ms):1,e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;target.lerpVectors(s.t,pw,e);dist=s.d+(d-s.d)*e;theta=s.th+(th-s.th)*e;phi=s.ph+(ph-s.ph)*e;place();if(k<1)requestAnimationFrame(step);else{flying--;done&&done()}})(performance.now())}
+
+// ---------- the view: the part, the lit faces, and a camera that takes the engineer to them ----------
+const caster=new THREE.Raycaster();
+const faceOfTri=t=>{const F=PART.faces;let lo=0,hi=F.length-1;while(lo<hi){const m=(lo+hi)>>1;if(F[m].tris[1]<=t)lo=m+1;else hi=m}const f=F[lo];return (f&&t>=f.tris[0]&&t<f.tris[1])?f:F.find(g=>t>=g.tris[0]&&t<g.tris[1])||f};   // which face a triangle belongs to
+function hitsAlong(p,d){caster.set(toWorld(p),new THREE.Vector3(d[0],d[2],-d[1]).normalize());caster.far=size*4;const old=partMat.clippingPlanes;partMat.clippingPlanes=[];const hs=caster.intersectObject(part,false);partMat.clippingPlanes=old;return hs.map(x=>({dist:x.distance,face:faceOfTri(x.faceIndex).id}))}
+function inSolid(p){return hitsAlong(p,[0.371,0.552,0.747]).length%2===1}   // parity of crossings along an odd direction: inside the material or not
+const PB=(()=>{const F=PART.faces;return [0,1,2].map(i=>Math.min(...F.map(f=>f.box[i]))).concat([0,1,2].map(i=>Math.max(...F.map(f=>f.box[i+3]))))})();
+let running=null;
+const HIDDEN=0.15;   // the share of the lit faces that must be seen from the camera's side before the page leaves the part whole
+const api={THREE, root, scene, camera, reduce,
+  part:{faces:PART.faces, face:id=>PART.faces[id], box:[bb.min.x,bb.min.y,bb.min.z,bb.max.x,bb.max.y,bb.max.z], size},
+  inSolid, hitsAlong,
+  highlight(ids,color){paint([]);tintIds((ids||[]).filter(i=>PART.faces[i]),new THREE.Color(color||'#EC6636'))},
+  tint(ids,color){tintIds(ids||[],new THREE.Color(color))},
+  look(point,{distance,from,ms=1000}={}){const ok=v=>Array.isArray(v)&&v.length===3&&v.every(Number.isFinite);
+    const pt=ok(point)?point:[ctr.x,ctr.y,ctr.z], d=Math.min(size*3,Math.max(2,Number.isFinite(distance)?distance:size*0.4));
+    const w=ok(from)&&from.some(x=>x)?new THREE.Vector3(from[0],from[2],-from[1]).normalize():null;   // "from" is a direction in part coordinates
+    api._looked=true;const p=new Promise(res=>flyTo(toWorld(pt),d,w?Math.atan2(w.z,w.x):theta,w?Math.acos(w.y):phi,ms,res));return Object.assign(p,{duration:ms,update(){}})},   // an animation object (the camera flies on its own clock) that is also a promise
+  frame(ids){   // where the camera stands to show these faces with the part around them: the feature's center, a distance that fills about half the view, and a direction from the feature's own side of the part
+    const fs=(ids||[]).map(i=>PART.faces[i]).filter(Boolean);if(!fs.length)return {c:[ctr.x,ctr.y,ctr.z],d:size*1.35,from:null};
+    const lo=[0,1,2].map(i=>Math.min(...fs.map(f=>f.box[i]))),hi=[0,1,2].map(i=>Math.max(...fs.map(f=>f.box[i+3]))),c=lo.map((v,i)=>(v+hi[i])/2),diag=Math.hypot(hi[0]-lo[0],hi[1]-lo[1],hi[2]-lo[2]);
+    const cv=new THREE.Vector3().subVectors(camera.position,target).normalize(),cur=[cv.x,-cv.z,cv.y];   // where the engineer is looking from, in part coordinates
+    const N=[0,0,0];let area=0,axArea=0;for(const f of fs){const r=faceNormal(f);N[0]+=r[0];N[1]+=r[1];N[2]+=r[2];area+=r[3];if(f.axis)axArea+=r[3]}const nl=Math.hypot(...N);let from;
+    const TA=api._ta||(api._ta=PART.faces.reduce((s,f)=>s+faceNormal(f)[3],0));
+    const whole={c:[ctr.x,ctr.y,ctr.z],d:size*1.35,from:[cur[0],cur[1],cur[2]+0.3]};
+    if(area>0.5*TA)return whole;   // the faces are most of the part (a note that governs the whole part): the whole part from where the engineer stands
+    const spread=diag>0.8*size;if(spread&&!(nl>0.6*area))return whole;   // spread across the part and looking every way: the whole part
+    if(nl>0.3*area)from=N.map(v=>v/nl);   // the faces look one way (a wall, a floor, a saddle, an inside corner): stand on the side they face
+    else{const q=axArea>0.5*area?fs.find(f=>f.axis):null;const out=[c[0]-ctr.x,c[1]-ctr.y,c[2]-ctr.z],n=Math.hypot(...out)||1;   // mostly round faces: a bore
+      if(q){const a=[q.axis[3],q.axis[4],q.axis[5]],al=Math.hypot(...a)||1,u=a.map(v=>v/al),ext=Math.abs(u[0]*(hi[0]-lo[0]))+Math.abs(u[1]*(hi[1]-lo[1]))+Math.abs(u[2]*(hi[2]-lo[2]));const solidAt=k=>inSolid([c[0]+u[0]*k,c[1]+u[1]*k,c[2]+u[2]*k]);const plus=solidAt(ext/2+1.5),minus=solidAt(-ext/2-1.5);let s=plus&&!minus?-1:(!plus&&minus?1:((u[0]*(c[0]-ctr.x)+u[1]*(c[1]-ctr.y)+u[2]*(c[2]-ctr.z))<0?-1:1));   // a bore: look in along its axis from the end that is open (probed into the part), tilted so the wall shows
+        const ax=a.map(v=>s*v/al),lift=Math.abs(ax[2])<0.9?[0,0,1]:[out[0]/n,out[1]/n,0];from=[0,1,2].map(i=>ax[i]+0.6*lift[i])}
+      else from=[out[0]/n,out[1]/n,out[2]/n+0.35]}   // anything else: its own side of the part, a little from above
+    from=[0,1,2].map(i=>from[i]+0.35*cur[i]);const L=Math.hypot(...from)||1;from=from.map(v=>v/L);   // and a little toward where the engineer already stands, so the camera does not swing for nothing
+    const cc=spread?[ctr.x,ctr.y,ctr.z]:c,d=spread?size*1.35:Math.min(size*1.35,Math.max(size*0.8,diag*3));   // far enough that the part around the feature shows where it is; faces spread across the part that look one way: the whole part, from their side
+    from=api._bestSide(cc,d,from);
+    return {c:cc,d,from}},
+  _bestSide(c,d,from){   // the lit faces are what the engineer must see: try the reasoned side and the directions around the part, keep the one that shows the most lit area (the reasoned side wins unless another shows clearly more), never from inside the part
+    const tc=toWorld(c),P0=camera.position.clone(),Q0=camera.quaternion.clone();
+    const seen=dir=>{const w=new THREE.Vector3(dir[0],dir[2],-dir[1]).normalize();camera.position.copy(tc).addScaledVector(w,d);camera.lookAt(tc);fitDepth(d);camera.updateMatrixWorld();
+      const pc=root.worldToLocal(camera.position.clone());if(inSolid([pc.x,pc.y,pc.z]))return -1;const v=api.visible();return v>=0?v:-1};
+    let best=from,bestV=seen(from);const base=bestV;
+    if(bestV>=0)for(const x of [-1,0,1])for(const y of [-1,0,1])for(const z of [-1,0,1]){if(!x&&!y&&!z)continue;const L=Math.hypot(x,y,z);const dir=[x/L,y/L,z/L+0.15];if(Math.abs(z/L)>0.95)continue;const v=seen(dir);if(v>bestV){bestV=v;best=dir}}
+    camera.position.copy(P0);camera.quaternion.copy(Q0);fitDepth(dist);camera.updateMatrixWorld();
+    if(!(bestV>0)||base>=0.85*bestV)return from;const L=Math.hypot(...best)||1;return best.map(v=>v/L)},
+  fit(ids,{ms=900}={}){const F=api.frame(ids);return api.look(F.c,{distance:F.d,from:F.from,ms})},
+  focus(ids,{overviewMs=700,holdMs=350,closeMs=1000}={}){   // the default view of a finding: out to the whole part, turning to the feature's side while the camera is outside the part, a beat, then in until the feature fills about half the view
+    api._looked=true;const F=api.frame(ids);
+    const S={t:target.clone(),d:dist,th:theta,ph:phi},w=F.from?new THREE.Vector3(F.from[0],F.from[2],-F.from[1]).normalize():null;
+    const th1=w?Math.atan2(w.z,w.x):theta,ph1=w?Math.acos(w.y):phi;let dth=th1-S.th;dth=Math.atan2(Math.sin(dth),Math.cos(dth));   // the short way around
+    const over=Math.max(S.d,size*1.35),tc=toWorld(F.c),tw=toWorld([ctr.x,ctr.y,ctr.z]),E=k=>k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2,C=k=>Math.min(1,Math.max(0,k)),dur=overviewMs+holdMs+closeMs;
+    return {duration:reduce?0:dur,update(t){if(reduce)t=dur;const k1=E(C(t/overviewMs)),k2=E(C((t-overviewMs-holdMs)/closeMs));
+      theta=S.th+dth*k1;phi=S.ph+(ph1-S.ph)*k1;const d1=S.d+(over-S.d)*k1;dist=d1+(F.d-d1)*k2;
+      target.lerpVectors(S.t,tw,k1).lerp(tc,k2);place()}}},
+  visible(){const rt=api._rt||(api._rt=new THREE.WebGLRenderTarget(160,100));const hid=[];root.children.forEach(o=>{if(o!==part&&o!==edges&&o.visible){o.visible=false;hid.push(o)}});
+    const old=part.material;part.material=api._vm||(api._vm=new THREE.MeshBasicMaterial({vertexColors:true,side:THREE.DoubleSide,clippingPlanes:partMat.clippingPlanes}));api._vm.clippingPlanes=partMat.clippingPlanes;
+    const bg=scene.background;scene.background=new THREE.Color(0xffffff);renderer.setRenderTarget(rt);renderer.render(scene,camera);const px=new Uint8Array(160*100*4);renderer.readRenderTargetPixels(rt,0,0,160,100,px);renderer.setRenderTarget(null);
+    scene.background=bg;part.material=old;hid.forEach(o=>o.visible=true);let n=0,any=0;for(let i=0;i<px.length;i+=4){if(px[i]||px[i+1]||px[i+2])any++;if(px[i]>170&&px[i+1]<150&&px[i+2]<110)n++;else if(px[i]-px[i+2]>40&&px[i]>px[i+1]+15)n++}return any?n/16000:NaN},   // NaN when nothing could be read: unknown, not invisible
+  footprint(ids){const key=ids.join(',');let m=api._fpm;   // the share of the view the lit faces would fill if nothing stood in front of them
+    if(!m||m.userData.key!==key){if(m){root.remove(m);m.geometry.dispose()}const tri=[];for(const id of ids){const f=PART.faces[id];if(!f)continue;for(let t=f.tris[0];t<f.tris[1];t++)tri.push(idx[t*3],idx[t*3+1],idx[t*3+2])}
+      const g=new THREE.BufferGeometry();g.setAttribute('position',geo.attributes.position);g.setIndex(tri);m=new THREE.Mesh(g,new THREE.MeshBasicMaterial({color:0x000000,side:THREE.DoubleSide}));m.userData.key=key;m.visible=false;root.add(m);api._fpm=m}
+    const rt=api._rt||(api._rt=new THREE.WebGLRenderTarget(160,100));const was=root.children.map(o=>o.visible);root.children.forEach(o=>o.visible=(o===m));
+    const bg=scene.background;scene.background=new THREE.Color(0xffffff);renderer.setRenderTarget(rt);renderer.render(scene,camera);const px=new Uint8Array(160*100*4);renderer.readRenderTargetPixels(rt,0,0,160,100,px);renderer.setRenderTarget(null);
+    scene.background=bg;root.children.forEach((o,i)=>o.visible=was[i]);let n=0;for(let i=0;i<px.length;i+=4)if(px[i]<128&&px[i+1]<128&&px[i+2]<128)n++;return n/16000},
+  section(normal,point){const n=new THREE.Vector3(normal[0],normal[2],-normal[1]).normalize(),p=toWorld(point);const pl=[new THREE.Plane(n.clone().negate(),n.dot(p))];partMat.clippingPlanes=pl;edges.material.clippingPlanes=pl;partMat.needsUpdate=true;api._cut={normal,point}},   // removes the material on the normal's side, so look from that side
+};
+function stop(){running=null;partMat.clippingPlanes=[];edges.material.clippingPlanes=[];partMat.needsUpdate=true;api._cut=null;api._checked=false;delete stage.dataset.view}
+function run(f){stop();stage.dataset.view='moving';api.highlight(f.faces||[]);   // data-view on the stage: "moving" until the view has arrived and been checked, then "settled"
+  try{running={a:api.focus(f.faces||[]),f,t0:null}}catch(err){console.error('view failed to start:',err);stop();api.highlight(f.faces||[])}}
+VIEW.show=f=>{VIEW.last=f;run(f)};
+VIEW.clear=()=>{stop();paint([])};
+VIEW.still=()=>{   // a picture of the whole part, nothing lit, for print; the live view is put back as it was
+  const was={t:target.clone(),d:dist,th:theta,ph:phi,col:col.slice(),clip:partMat.clippingPlanes,eclip:edges.material.clippingPlanes};
+  try{paint([]);partMat.clippingPlanes=[];edges.material.clippingPlanes=[];partMat.needsUpdate=true;target.copy(toWorld([ctr.x,ctr.y,ctr.z]));dist=size*1.35;theta=-0.75;phi=0.95;place();
+    head.position.copy(camera.position);head.target.position.copy(target);renderer.render(scene,camera);return renderer.domElement.toDataURL('image/png')}
+  finally{target.copy(was.t);dist=was.d;theta=was.th;phi=was.ph;place();col.set(was.col);geo.attributes.color.needsUpdate=true;partMat.clippingPlanes=was.clip;edges.material.clippingPlanes=was.eclip;partMat.needsUpdate=true}};
+(function loop(now){now=now||performance.now();
+  if(running&&running.final&&!api._checked&&(running.f.faces||[]).length){api._checked=true;   // once the camera has arrived (its last frame drawn) the feature must be visible, however small; if it is hidden, correct it
+    try{const ids=running.f.faces;const d0=dist;const vis=()=>{const v=api.visible();if(!(v>=0))throw 0;return v};const look=()=>vis()<0.0003;const behind=()=>{const v=vis();return v<0.0003||v<HIDDEN*api.footprint(ids)};   // too small to see; or mostly hidden behind the part
+      const inside=()=>{const pc=root.worldToLocal(camera.position.clone());return inSolid([pc.x,pc.y,pc.z])};
+      let hid=look();if(hid){dist=Math.max(size*0.06,dist*0.45);place();hid=inside()?true:look();if(hid){dist=Math.min(size*3,d0*2.2);place();hid=look()}if(hid){dist=d0;place()}}   // first closer (a small feature at the part's scale) unless that puts the camera inside the part, then further out
+      if((hid||behind())&&!api._cut){const fs=ids.map(i=>PART.faces[i]).filter(Boolean);let N=[0,0,0],A=0;for(const f of fs){const r=faceNormal(f);N[0]+=r[0];N[1]+=r[1];N[2]+=r[2];A+=r[3]}
+        const nl=Math.hypot(...N);let dir=null,grp=fs;if(nl>0.3*A)dir=N.map(x=>x/nl);
+        else{const pl=fs.map(f=>[f,faceNormal(f)]).filter(([,r])=>Math.hypot(r[0],r[1],r[2])>0.5*r[3]).sort((a,b)=>b[1][3]-a[1][3])[0];if(pl){const r=pl[1],l=Math.hypot(r[0],r[1],r[2]);dir=[r[0]/l,r[1]/l,r[2]/l];grp=[pl[0]]}}   // the faces look one way, or the largest flat one among them does
+        const cv=new THREE.Vector3().subVectors(camera.position,target).normalize(),cur=[cv.x,-cv.z,cv.y];
+        if(dir){const lo=[0,1,2].map(i=>Math.min(...grp.map(f=>f.box[i]))),hi=[0,1,2].map(i=>Math.max(...grp.map(f=>f.box[i+3]))),c=lo.map((x,i)=>(x+hi[i])/2);
+          const ext=Math.abs(dir[0])*(hi[0]-lo[0])+Math.abs(dir[1])*(hi[1]-lo[1])+Math.abs(dir[2])*(hi[2]-lo[2]),k=ext/2+0.004*size;
+          api.section(dir,[c[0]+dir[0]*k,c[1]+dir[1]*k,c[2]+dir[2]*k]);   // cut away everything in front of the faces, on the side they look toward
+          let w=[0,1,2].map(i=>dir[i]+0.3*cur[i]);const L=Math.hypot(...w)||1;w=w.map(x=>x/L);const ww=new THREE.Vector3(w[0],w[2],-w[1]).normalize();
+          target.copy(toWorld(c));theta=Math.atan2(ww.z,ww.x);phi=Math.min(3.0,Math.max(0.15,Math.acos(ww.y)));dist=Math.min(size*1.35,Math.max(size*0.45,Math.hypot(hi[0]-lo[0],hi[1]-lo[1],hi[2]-lo[2])*3));place()}
+        else{const b=fs[0].box,c=[(b[0]+b[3])/2,(b[1]+b[4])/2,(b[2]+b[5])/2];api.section(cur,c);dist=d0;place()}   // round faces with no side of their own: cut from where the camera stands
+        hid=look();if(hid){dist=Math.min(size*3,dist*2.2);place();hid=look()}}
+      if(hid)api.fit(ids)}catch(err){if(err!==0)console.error('visibility check failed:',err)}}
+  if(running&&(!running.final||!Number.isFinite(running.a.duration))){if(running.t0===null)running.t0=now;const a=running.a,D=Number.isFinite(a.duration)?a.duration:null,t=reduce?(D||0):now-running.t0;
+    try{a.update&&a.update(D===null?t:Math.min(t,D))}catch(err){console.error('view failed:',err);running=null}
+    if(running&&!running.final&&t>=(D===null?1500:D))running.final=true}   // a timed move's last frame is drawn once and then held as it is, so a correction the visibility check makes afterward stays (a view with no duration keeps running, as before)
+  head.position.copy(camera.position);head.target.position.copy(target);
+  renderer.render(scene,camera);
+  if(running&&running.final&&(api._checked||!(running.f.faces||[]).length)&&!flying){const st=document.getElementById('stage');if(st.dataset.view!=='settled')st.dataset.view='settled'}   // arrived, checked, and any correcting flight landed: whatever is looking at the page can take its picture now
+  const ld=document.getElementById('loading');ld&&ld.remove();requestAnimationFrame(loop)})();
+}
+try{ if(typeof THREE==='undefined') throw new Error('3D engine did not load'); init3D(); }
+catch(err){ console.error(err); const st=document.getElementById('stage'); st.dataset.view='no3d'; st.innerHTML='<div style="padding:24px;color:var(--muted);font-size:14px">The 3D view could not load. The changes and the fix instructions still work.</div>'; }
+// ---------- print: every change open, how Claude worked it out unfolded, and a fresh still of the part in place of the live view ----------
+const printOpened=[];
+addEventListener('beforeprint',()=>{document.querySelectorAll('details.fold:not([open])').forEach(d=>{d.open=true;printOpened.push(d)});
+  try{const u=VIEW.still&&VIEW.still();if(u)document.getElementById('printshot').src=u}catch(err){console.error('print picture failed:',err)}});
+addEventListener('afterprint',()=>{printOpened.splice(0).forEach(d=>{d.open=false})});
+</script></body></html>

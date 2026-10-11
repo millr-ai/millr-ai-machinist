@@ -1,0 +1,16 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "millr-ai",
+  "description": "Millr, the AI Machinist: DFM review for CNC machined parts, from Millr Inc.",
+  "owner": {
+    "name": "Millr Inc.",
+    "email": "hello@millr.ai",
+    "url": "https://millr.ai"
+  },
+  "plugins": [
+    {
+      "name": "millr",
+      "source": "./"
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "name": "millr",
+  "displayName": "Millr, the AI Machinist",
+  "version": "2.0.0",
+  "description": "DFM review for CNC machined parts. Millr, the AI Machinist, reviews a machined part as a senior machinist would and shows the engineer every design change that cuts its cost, lead time or risk of scrap, on an interactive 3D page of their own part, with the exact change to the CAD model or the drawing.",
+  "author": {
+    "name": "Millr Inc.",
+    "email": "hello@millr.ai",
+    "url": "https://millr.ai"
+  },
+  "homepage": "https://millr.ai",
+  "repository": "https://github.com/millr-ai/millr-ai-machinist",
+  "license": "LicenseRef-PolyForm-Shield-1.0.0",
+  "icon": "./icon.svg",
+  "keywords": [
+    "dfm",
+    "design-for-manufacturing",
+    "manufacturability",
+    "cnc",
+    "machining",
+    "machined-parts",
+    "machinist",
+    "mechanical-engineering",
+    "manufacturing",
+    "cad",
+    "step",
+    "gd-and-t",
+    "tolerancing",
+    "machine-shop"
+  ],
+  "supportUrl": "https://millr.ai/support.html",
+  "privacyPolicyUrl": "https://millr.ai/privacy.html"
+}
