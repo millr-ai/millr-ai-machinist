@@ -29,5 +29,7 @@
     "machine-shop"
   ],
   "supportUrl": "https://millr.ai/support.html",
-  "privacyPolicyUrl": "https://millr.ai/privacy.html"
+  "privacyPolicyUrl": "https://millr.ai/privacy.html",
+  "documentationUrl": "https://github.com/millr-ai/millr-ai-machinist#readme",
+  "termsOfServiceUrl": "https://github.com/millr-ai/millr-ai-machinist/blob/main/LICENSE"
 }
